@@ -18,6 +18,7 @@ This repository includes all the required features for the **CSE112 Bonus (10 Ma
 
 - **ML-Based Traffic Prediction**: Uses `scikit-learn` (RandomForestRegressor) trained on temporal traffic data (Morning, Afternoon, Evening, Night) to forecast congestion based on road capacity, distance, condition, and district population.
 - **Algorithm Comparison Visualizer**: A side-by-side race animation comparing Dijkstra's Algorithm and A* Search, demonstrating how A* explores fewer nodes by utilizing a heuristic.
+- **A* Theoretical Analysis**: A detailed technical report (`docs/A_Star_Algorithm_Analysis.md`) covering the mathematical foundations, complexity, and performance of the A* algorithm, specifically tailored for the CSE112 theoretical project.
 
 ## 🛠️ Installation & Setup
 

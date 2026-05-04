@@ -93,12 +93,21 @@ def a_star_emergency_routing(G, traffic_data, start, end, emergency_time_period)
                 weight = get_edge_weight(G, traffic_data, current_node, neighbor, key, None, emergency_time_period, base_distance, 'emergency')
                 if weight == float('inf'):
                     continue
+                # Calculate g(n): cost from start to neighbor
                 tentative_g_score = g_scores[current_node] + weight
+                
                 if tentative_g_score < g_scores[neighbor]:
+                    # Update path and scores
                     g_scores[neighbor] = tentative_g_score
-                    f_scores[neighbor] = tentative_g_score + heuristic(G, neighbor, end)
+                    
+                    # Calculate f(n) = g(n) + h(n)
+                    h_n = heuristic(G, neighbor, end)
+                    f_scores[neighbor] = tentative_g_score + h_n
+                    
                     previous[neighbor] = current_node
                     edge_keys[neighbor][current_node] = key
+                    
+                    # Add to priority queue: (f_score, g_score, node)
                     heapq.heappush(queue, (f_scores[neighbor], tentative_g_score, neighbor))
 
     path = []
