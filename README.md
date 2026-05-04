@@ -11,7 +11,7 @@ This repository includes all the required features for the **CSE112 Bonus (10 Ma
 3. **Enhanced Visualization & UI (2 Marks)**: Improved Streamlit UI with side-by-side algorithm comparison and interactive Folium maps.
 4. **Deployment & Engineering (3 Marks)**: 
    - **Docker Containerization**: The project is fully containerized using Docker (`Dockerfile` and `docker-compose.yml` included).
-   - **Live Web App**: Deployed and accessible online.
+   - **Live Web App**: Deployed and accessible at [https://ahmedheshamgebreil-algo-pro-app-updated-rnshmq.streamlit.app/](https://ahmedheshamgebreil-algo-pro-app-updated-rnshmq.streamlit.app/)
 5. **GitHub Repo & LinkedIn Post (1 Mark)**: Well-structured repository with this comprehensive README and a draft for the LinkedIn post.
 
 ### 🚀 Key Additions
@@ -85,8 +85,8 @@ Key features include:
 🐳 Docker Containerization: Fully containerized the app for seamless deployment.
 🌐 Live Web App: Deployed the Streamlit dashboard for anyone to try out!
 
-Check out the live demo here: [Insert Live Link Here]
-Explore the code on GitHub: [Insert GitHub Link Here]
+Check out the live demo here: [https://ahmedheshamgebreil-algo-pro-app-updated-rnshmq.streamlit.app/](https://ahmedheshamgebreil-algo-pro-app-updated-rnshmq.streamlit.app/)
+Explore the code on GitHub: [https://github.com/ahmedheshamgebreil/ALGO-Pro](https://github.com/ahmedheshamgebreil/ALGO-Pro)
 
 A big thank you to my professors and peers for the support. Let me know what you think in the comments! 👇
 
