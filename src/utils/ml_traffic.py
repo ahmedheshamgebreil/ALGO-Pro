@@ -25,7 +25,9 @@ class TrafficPredictor:
         for _, row in traffic_df.iterrows():
             road_id = str(row["RoadID"])
             if "-" not in road_id: continue
-            from_id, to_id = map(int, road_id.split("-"))
+            parts = road_id.split("-")
+            if len(parts) != 2: continue
+            from_id, to_id = parts[0], parts[1]
             
             # Get road features
             road_info = roads_df[(roads_df["FromID"] == from_id) & (roads_df["ToID"] == to_id)]
@@ -47,25 +49,74 @@ class TrafficPredictor:
                 data.append([from_id, to_id, dist, cap, cond, from_pop, to_pop, time_mapping[period], flow])
         
         df = pd.DataFrame(data, columns=["FromID", "ToID", "Distance", "Capacity", "Condition", "FromPop", "ToPop", "TimePeriod", "Flow"])
+        
+        # Convert IDs to numeric for ML model
+        df['FromID'] = pd.factorize(df['FromID'])[0]
+        df['ToID'] = pd.factorize(df['ToID'])[0]
+        
         return df
 
     def train(self, traffic_df, roads_df, neighborhoods_df):
-        df = self.prepare_data(traffic_df, roads_df, neighborhoods_df)
-        X = df.drop("Flow", axis=1)
-        y = df["Flow"]
+        # Store the original IDs to create a mapping for prediction
+        self.raw_df = self.prepare_data(traffic_df, roads_df, neighborhoods_df)
+        
+        # We need to handle the mapping of string IDs to the numeric factors used in training
+        # Let's simplify: just use hash or a simple mapping
+        self.id_map = {}
+        all_ids = set(traffic_df["RoadID"].str.split("-").str[0].unique()) | set(traffic_df["RoadID"].str.split("-").str[1].unique())
+        for i, original_id in enumerate(sorted(list(all_ids))):
+            self.id_map[str(original_id)] = i
+
+        # Re-prepare data with the mapping
+        data = []
+        time_periods = {"morning": "MorningPeak(veh/h)", "afternoon": "Afternoon(veh/h)", "evening": "Evening Peak(veh/h)", "night": "Night(veh/h)"}
+        time_mapping = {"morning": 0, "afternoon": 1, "evening": 2, "night": 3}
+
+        for _, row in traffic_df.iterrows():
+            road_id = str(row["RoadID"])
+            parts = road_id.split("-")
+            if len(parts) != 2: continue
+            u_id, v_id = parts[0], parts[1]
+            
+            road_info = roads_df[(roads_df["FromID"].astype(str) == u_id) & (roads_df["ToID"].astype(str) == v_id)]
+            if road_info.empty:
+                road_info = roads_df[(roads_df["FromID"].astype(str) == v_id) & (roads_df["ToID"].astype(str) == u_id)]
+            if road_info.empty: continue
+            
+            dist = road_info.iloc[0]["Distance(km)"]
+            cap = road_info.iloc[0]["Current Capacity(vehicles/hour)"]
+            cond = road_info.iloc[0]["Condition(1-10)"]
+            
+            from_pop_row = neighborhoods_df[neighborhoods_df["ID"].astype(str) == u_id]
+            to_pop_row = neighborhoods_df[neighborhoods_df["ID"].astype(str) == v_id]
+            if from_pop_row.empty or to_pop_row.empty: continue
+            
+            from_pop = from_pop_row.iloc[0]["Population"]
+            to_pop = to_pop_row.iloc[0]["Population"]
+            
+            for period, col in time_periods.items():
+                flow = row[col]
+                data.append([self.id_map[u_id], self.id_map[v_id], dist, cap, cond, from_pop, to_pop, time_mapping[period], flow])
+
+        train_df = pd.DataFrame(data, columns=["FromID", "ToID", "Distance", "Capacity", "Condition", "FromPop", "ToPop", "TimePeriod", "Flow"])
+        X = train_df.drop("Flow", axis=1)
+        y = train_df["Flow"]
         
         self.model.fit(X, y)
         self.is_trained = True
-        print("Traffic Prediction Model Trained Successfully.")
 
     def predict(self, from_id, to_id, dist, cap, cond, from_pop, to_pop, time_period_str):
         if not self.is_trained:
             return None
         
+        # Map string IDs to numeric
+        u_numeric = self.id_map.get(str(from_id), -1)
+        v_numeric = self.id_map.get(str(to_id), -1)
+        
         time_mapping = {"morning": 0, "afternoon": 1, "evening": 2, "night": 3}
         time_val = time_mapping.get(time_period_str.lower(), 0)
         
-        features = np.array([[from_id, to_id, dist, cap, cond, from_pop, to_pop, time_val]])
+        features = np.array([[u_numeric, v_numeric, dist, cap, cond, from_pop, to_pop, time_val]])
         prediction = self.model.predict(features)[0]
         return prediction
 

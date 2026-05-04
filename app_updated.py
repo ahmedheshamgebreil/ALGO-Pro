@@ -761,9 +761,11 @@ elif choose == "ML Traffic Prediction":
                 
                 road_options = []
                 for _, row in roads_df.iterrows():
-                    from_name = neighborhoods_df[neighborhoods_df["ID"] == row["FromID"]].iloc[0]["Name"]
-                    to_name = neighborhoods_df[neighborhoods_df["ID"] == row["ToID"]].iloc[0]["Name"]
-                    road_options.append(f"{from_name} to {to_name} (ID: {row['FromID']}-{row['ToID']})")
+                    from_id_str = str(row["FromID"])
+                    to_id_str = str(row["ToID"])
+                    from_name = neighborhoods_df[neighborhoods_df["ID"].astype(str) == from_id_str].iloc[0]["Name"]
+                    to_name = neighborhoods_df[neighborhoods_df["ID"].astype(str) == to_id_str].iloc[0]["Name"]
+                    road_options.append(f"{from_name} to {to_name} (ID: {from_id_str}-{to_id_str})")
                 
                 selected_road_str = st.selectbox("Select Road for Prediction", road_options)
                 selected_road_idx = road_options.index(selected_road_str)
@@ -773,13 +775,13 @@ elif choose == "ML Traffic Prediction":
                 time_period = st.selectbox("Select Time Period", ["Morning", "Afternoon", "Evening", "Night"], key="ml_time")
             
             if st.button("Predict Traffic Flow"):
-                from_id = selected_road["FromID"]
-                to_id = selected_road["ToID"]
+                from_id = str(selected_road["FromID"])
+                to_id = str(selected_road["ToID"])
                 dist = selected_road["Distance(km)"]
                 cap = selected_road["Current Capacity(vehicles/hour)"]
                 cond = selected_road["Condition(1-10)"]
-                from_pop = neighborhoods_df[neighborhoods_df["ID"] == from_id].iloc[0]["Population"]
-                to_pop = neighborhoods_df[neighborhoods_df["ID"] == to_id].iloc[0]["Population"]
+                from_pop = neighborhoods_df[neighborhoods_df["ID"].astype(str) == from_id].iloc[0]["Population"]
+                to_pop = neighborhoods_df[neighborhoods_df["ID"].astype(str) == to_id].iloc[0]["Population"]
                 
                 prediction = predictor.predict(from_id, to_id, dist, cap, cond, from_pop, to_pop, time_period)
                 
