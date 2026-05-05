@@ -6,6 +6,7 @@ This module implements the Streamlit web application for the Smart City Transpor
 
 import streamlit as st
 import os
+import time
 import folium
 from streamlit_folium import st_folium
 from streamlit_option_menu import option_menu
