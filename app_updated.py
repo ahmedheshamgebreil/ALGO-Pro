@@ -759,12 +759,20 @@ elif choose == "ML Traffic Prediction":
                 roads_df = data["existing_roads"]
                 neighborhoods_df = data["neighborhoods"]
                 
+                # Build a unified node name lookup: neighborhoods + facilities
+                facilities_df = data["facilities"]
+                all_nodes = pd.concat([
+                    neighborhoods_df[["ID", "Name"]].assign(ID=neighborhoods_df["ID"].astype(str)),
+                    facilities_df[["ID", "Name"]].assign(ID=facilities_df["ID"].astype(str))
+                ], ignore_index=True)
+                node_name_map = dict(zip(all_nodes["ID"], all_nodes["Name"]))
+
                 road_options = []
                 for _, row in roads_df.iterrows():
                     from_id_str = str(row["FromID"])
                     to_id_str = str(row["ToID"])
-                    from_name = neighborhoods_df[neighborhoods_df["ID"].astype(str) == from_id_str].iloc[0]["Name"]
-                    to_name = neighborhoods_df[neighborhoods_df["ID"].astype(str) == to_id_str].iloc[0]["Name"]
+                    from_name = node_name_map.get(from_id_str, from_id_str)
+                    to_name = node_name_map.get(to_id_str, to_id_str)
                     road_options.append(f"{from_name} to {to_name} (ID: {from_id_str}-{to_id_str})")
                 
                 selected_road_str = st.selectbox("Select Road for Prediction", road_options)
@@ -780,8 +788,11 @@ elif choose == "ML Traffic Prediction":
                 dist = selected_road["Distance(km)"]
                 cap = selected_road["Current Capacity(vehicles/hour)"]
                 cond = selected_road["Condition(1-10)"]
-                from_pop = neighborhoods_df[neighborhoods_df["ID"].astype(str) == from_id].iloc[0]["Population"]
-                to_pop = neighborhoods_df[neighborhoods_df["ID"].astype(str) == to_id].iloc[0]["Population"]
+                from_pop_rows = neighborhoods_df[neighborhoods_df["ID"].astype(str) == from_id]
+                to_pop_rows = neighborhoods_df[neighborhoods_df["ID"].astype(str) == to_id]
+                # Facility nodes (F1, F2, etc.) are not in neighborhoods; use 0 as fallback
+                from_pop = from_pop_rows.iloc[0]["Population"] if not from_pop_rows.empty else 0
+                to_pop = to_pop_rows.iloc[0]["Population"] if not to_pop_rows.empty else 0
                 
                 prediction = predictor.predict(from_id, to_id, dist, cap, cond, from_pop, to_pop, time_period)
                 
