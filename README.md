@@ -2,17 +2,18 @@
 
 This project simulates and optimizes transportation networks for smart cities, with a focus on Cairo, Egypt. It implements various algorithms to find optimal routes, simulate traffic conditions, and optimize public transportation schedules.
 
-## 🌟 CSE112 Bonus Features Implemented
+##  CSE112  Features Implemented
 
-This repository includes all the required features for the **CSE112 Bonus (10 Marks)**:
 
-1. **Early Submission (Week 13) (2 Marks)**: Submitted ahead of the deadline.
-2. **AI Tools & Technologies (2 Marks)**: Utilized AI assistance for code optimization, debugging, and documentation.
-3. **Enhanced Visualization & UI (2 Marks)**: Improved Streamlit UI with side-by-side algorithm comparison and interactive Folium maps.
-4. **Deployment & Engineering (3 Marks)**: 
+**AI Tools & Technologies (2 Marks)**: Utilized AI assistance for code optimization, debugging, and documentation.
+
+ **Enhanced Visualization & UI (2 Marks)**: Improved Streamlit UI with side-by-side algorithm comparison and interactive Folium maps.
+
+ **Deployment & Engineering (3 Marks)**: 
    - **Docker Containerization**: The project is fully containerized using Docker (`Dockerfile` and `docker-compose.yml` included).
    - **Live Web App**: Deployed and accessible at [https://ahmedheshamgebreil-algo-pro-app-updated-rnshmq.streamlit.app/](https://ahmedheshamgebreil-algo-pro-app-updated-rnshmq.streamlit.app/)
-5. **GitHub Repo & LinkedIn Post (1 Mark)**: Well-structured repository with this comprehensive README and a draft for the LinkedIn post.
+
+ **GitHub Repo & LinkedIn Post (1 Mark)**: Well-structured repository with this comprehensive README and a draft for the LinkedIn post.
 
 ### 🚀 Key Additions
 
