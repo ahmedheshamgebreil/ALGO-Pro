@@ -12,8 +12,7 @@ class TrafficPredictor:
     def prepare_data(self, traffic_df, roads_df, neighborhoods_df):
         # Merge data to create features
         # Features: FromID, ToID, Distance, Capacity, Condition, From_Population, To_Population, Time_Period
-        
-        data = []
+                data = []
         time_periods = {
             "morning": "MorningPeak(veh/h)",
             "afternoon": "Afternoon(veh/h)",
