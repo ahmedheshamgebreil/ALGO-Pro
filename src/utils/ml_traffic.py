@@ -89,10 +89,9 @@ class TrafficPredictor:
             
             from_pop_row = neighborhoods_df[neighborhoods_df["ID"].astype(str) == u_id]
             to_pop_row = neighborhoods_df[neighborhoods_df["ID"].astype(str) == v_id]
-            if from_pop_row.empty or to_pop_row.empty: continue
-            
-            from_pop = from_pop_row.iloc[0]["Population"]
-            to_pop = to_pop_row.iloc[0]["Population"]
+            # Facility nodes (F1, F2, etc.) are not in neighborhoods_df; use 0 as fallback
+            from_pop = from_pop_row.iloc[0]["Population"] if not from_pop_row.empty else 0
+            to_pop = to_pop_row.iloc[0]["Population"] if not to_pop_row.empty else 0
             
             for period, col in time_periods.items():
                 flow = row[col]
