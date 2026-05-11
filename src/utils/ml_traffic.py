@@ -12,7 +12,8 @@ class TrafficPredictor:
     def prepare_data(self, traffic_df, roads_df, neighborhoods_df):
         # Merge data to create features
         # Features: FromID, ToID, Distance, Capacity, Condition, From_Population, To_Population, Time_Period
-                data = []
+        
+        data = []
         time_periods = {
             "morning": "MorningPeak(veh/h)",
             "afternoon": "Afternoon(veh/h)",
@@ -39,9 +40,11 @@ class TrafficPredictor:
             cap = road_info.iloc[0]["Current Capacity(vehicles/hour)"]
             cond = road_info.iloc[0]["Condition(1-10)"]
             
-            # Get population features
-            from_pop = neighborhoods_df[neighborhoods_df["ID"] == from_id].iloc[0]["Population"]
-            to_pop = neighborhoods_df[neighborhoods_df["ID"] == to_id].iloc[0]["Population"]
+            # Get population features (facility nodes like F1/F2 won't be in neighborhoods; use 0)
+            from_pop_r = neighborhoods_df[neighborhoods_df["ID"].astype(str) == str(from_id)]
+            to_pop_r = neighborhoods_df[neighborhoods_df["ID"].astype(str) == str(to_id)]
+            from_pop = from_pop_r.iloc[0]["Population"] if not from_pop_r.empty else 0
+            to_pop = to_pop_r.iloc[0]["Population"] if not to_pop_r.empty else 0
             
             for period, col in time_periods.items():
                 flow = row[col]
